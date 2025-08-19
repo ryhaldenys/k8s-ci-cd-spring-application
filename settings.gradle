@@ -1,1 +1,3 @@
 rootProject.name = 'k8s-ci-cd-spring-application'
+
+include ':k8s-ci-cd-config', ':k8s-ci-cd-api', ':k8s-ci-cd-core'
