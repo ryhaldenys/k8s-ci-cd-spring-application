@@ -33,4 +33,4 @@ jobs:
           title: Code coverage report
           paths: ${{ github.workspace }}/k8s-ci-cd-config/build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
           token: ${{ secrets.PAT_TOKEN }}
-          continue-on-error: 'false'
+          continue-on-error: false
