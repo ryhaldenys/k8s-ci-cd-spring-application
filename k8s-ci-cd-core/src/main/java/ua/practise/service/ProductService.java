@@ -1,10 +1,10 @@
 package ua.practise.service;
 
+import java.util.List;
 import ua.practise.vo.Product;
 
-import java.util.List;
-
 public interface ProductService {
-    List<Product> getProducts();
-    Product getProductsById(String id);
+  List<Product> getProducts();
+
+  Product getProductsById(String id);
 }
