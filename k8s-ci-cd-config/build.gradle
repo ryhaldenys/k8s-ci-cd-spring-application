@@ -1,4 +1,3 @@
-
 bootJar {
     enabled = true
     archiveBaseName = "${rootProject.name}"
@@ -6,4 +5,7 @@ bootJar {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+
+    implementation project(':k8s-ci-cd-core')
+    implementation project(':k8s-ci-cd-api')
 }
