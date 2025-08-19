@@ -2,7 +2,7 @@ name: release.yml
 on:
   workflow_dispatch:
   pull_request:
-    types: [synchronize, labeled]
+    types: [synchronize, labeled, unlabeled]
 
 jobs:
   create-release:
