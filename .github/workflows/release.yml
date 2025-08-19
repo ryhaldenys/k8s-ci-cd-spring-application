@@ -1,14 +1,12 @@
 name: release.yml
 on:
   workflow_dispatch:
-  label:
-    types: [created]
   pull_request:
-    types: [synchronize]
+    types: [synchronize, labeled]
 
 jobs:
   create-release:
     runs-on: ubuntu-latest
     if: contains(join(fromJSON(toJson(github.event.pull_request.labels)).*.name, ','), 'Release')
     steps:
-      - run: echo ${{ toJSON(github) }}
+      - run: echo '${{ toJSON(github) }}'
