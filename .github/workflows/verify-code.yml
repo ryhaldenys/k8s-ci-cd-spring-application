@@ -34,7 +34,7 @@ jobs:
           paths: ${{ github.workspace }}/k8s-ci-cd-config/build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
           token: ${{ secrets.PAT_TOKEN }}
           continue-on-error: false
-          update-comment: 'false'
+          update-comment: true
       - name: Fail PR if overall coverage is less than 80%
         if: ${{ steps.jacoco.outputs.coverage-overall < 80.0 }}
         uses: actions/github-script@v6
