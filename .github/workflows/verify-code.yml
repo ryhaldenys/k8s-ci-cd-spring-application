@@ -1,7 +1,7 @@
 name: Verify code style and code coverage
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
   push:
     branches:
