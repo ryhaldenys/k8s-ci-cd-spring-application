@@ -1,7 +1,7 @@
 name: Verify code style and code coverage
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
   push:
     branches:
@@ -32,4 +32,4 @@ jobs:
         with:
           title: Code coverage report
           paths: ${{ github.workspace }}/k8s-ci-cd-config/build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
