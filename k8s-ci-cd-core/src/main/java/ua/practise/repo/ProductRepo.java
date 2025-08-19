@@ -15,7 +15,7 @@ public class ProductRepo {
   }
 
   public Optional<Product> findById(UUID id) {
-    return products().stream().filter(product -> product.getId().equals(id)).findFirst();
+    return products().stream().filter(product -> product.getId().equals(id)).findAny();
   }
 
   private static List<Product> products() {
