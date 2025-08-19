@@ -83,7 +83,7 @@ subprojects {
                     files(classDirectories.files.collect {
                         fileTree(dir: it, exclude: [
                                 '**/*Application.java',
-                                '**/vo/**'
+                                '**/vo/*'
                         ])
                     })
             )
