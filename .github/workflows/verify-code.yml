@@ -12,6 +12,7 @@ jobs:
     name: Verify code style and code coverage
     runs-on: ubuntu-latest
     steps:
+      - run: echo ${{ github }}
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up java
