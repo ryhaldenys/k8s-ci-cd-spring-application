@@ -1,0 +1,15 @@
+plugins {
+    id 'jacoco-report-aggregation'
+}
+
+bootJar {
+    enabled = true
+    archiveBaseName = "${rootProject.name}"
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+
+    implementation project(':k8s-ci-cd-core')
+    implementation project(':k8s-ci-cd-api')
+}

@@ -1,0 +1,8 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: k8s-ci-cd-spring-application
+logging:
+  level:
+    root: info

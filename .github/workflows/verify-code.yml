@@ -1,0 +1,43 @@
+name: Verify code style and code coverage
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+jobs:
+  verify-code:
+    name: Verify code style and code coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'gradle'
+      - name: Run format check
+        run: |
+          chmod +x gradlew
+          ./gradlew spotlessCheck
+      - name: Run coverage
+        run: ./gradlew testCodeCoverageReport
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.7.2
+        with:
+          title: Code coverage report
+          paths: ${{ github.workspace }}/k8s-ci-cd-config/build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
+          token: ${{ secrets.PAT_TOKEN }}
+          continue-on-error: false
+          update-comment: true
+      - name: Fail PR if overall coverage is less than 80%
+        if: ${{ steps.jacoco.outputs.coverage-overall < 80.0 }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('Overall coverage is less than 80%!')
