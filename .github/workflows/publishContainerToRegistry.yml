@@ -36,7 +36,7 @@ jobs:
         id: application_version 
         run: |
          VERSION=$(./gradlew -q printVersion)
-         echo "version=$VERSION" >> $GITHUB_OUTPUT
+         echo "version=$VERSION" | tee -a $GITHUB_OUTPUT
          
       - name: Docker Login
         uses: docker/login-action@v3.5.0
