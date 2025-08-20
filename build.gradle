@@ -25,6 +25,12 @@ allprojects {
     tasks.withType(BootJar).configureEach {
         enabled = false
     }
+    
+    task printVersion {
+        doLast {
+            println project.version
+        }
+    }
 }
 
 subprojects {
