@@ -49,4 +49,18 @@ jobs:
           platforms: linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - name: Print tags
+        run: echo ${{ toJson(steps.meta.outputs.tags) }}
+      
+  deploy-application:
+    name: Deploy application to AKS
+    needs: publish-container
+    runs-on: ububtu-latest
+    steps: 
+      - name: Login to Azure
+        uses: Azure/login@v2.3.0
+        with:
+         creds: ${{ secrets.AZURE_CREDS }}
+   
+   
    
