@@ -61,12 +61,12 @@ jobs:
         uses: Azure/login@v2.3.0
         with:
          creds: ${{ secrets.AZURE_CREDS }}
-      - name: Azure CLI script
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az aks get-credentials --resource-group ${{ env.AZ_GROUP }} --name ${{ env.AZ_CLUSTER }}
+      # - name: Azure CLI script
+      #   uses: azure/cli@v2
+      #   with:
+      #     azcliversion: latest
+      #     inlineScript: |
+      #       az aks get-credentials --resource-group ${{ env.AZ_GROUP }} --name ${{ env.AZ_CLUSTER }}
       - name: Setup Kubectl
         uses: azure/setup-kubectl@v4
         id: install
@@ -81,8 +81,10 @@ jobs:
          id: install
       - name: Deploy with helm
         run: |
-         which helm
-         helm version
+         helm upgrade --install application k8s-application \
+          --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
+          --set image.tag=${{ steps.application_version.outputs.version }}
+
          
        
    
