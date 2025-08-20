@@ -5,6 +5,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  AZ_GROUP: FREE
+  AZ_CLUSTER: k8s-spring-cluster
 
 jobs:
   publish-container:
@@ -60,8 +62,12 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            az account show
-     
+            az aks get-credentials --resource-group ${{ env.AZ_GROUP }} --name ${{ env.AZ_CLUSTER }}
+      - name: Setup Kubectl
+        uses: azure/setup-kubectl@v4
+        id: install
+      - name: Run 
+        run: kubectl config current-context
    
    
    
