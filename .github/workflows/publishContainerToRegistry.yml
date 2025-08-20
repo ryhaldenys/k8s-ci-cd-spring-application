@@ -57,15 +57,19 @@ jobs:
         uses: Azure/login@v2.3.0
         with:
          creds: ${{ secrets.AZURE_CREDS }}
-      - name: Azure CLI script
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az aks get-credentials --resource-group ${{ env.AZ_GROUP }} --name ${{ env.AZ_CLUSTER }}
+      # - name: Azure CLI script
+      #   uses: azure/cli@v2
+      #   with:
+      #     azcliversion: latest
+      #     inlineScript: |
+      #       az aks get-credentials --resource-group ${{ env.AZ_GROUP }} --name ${{ env.AZ_CLUSTER }}
       - name: Setup Kubectl
         uses: azure/setup-kubectl@v4
         id: install
+      - uses: azure/aks-set-context@v4
+        with:
+         resource-group: ${{ env.AZ_GROUP }}
+         cluster-name: ${{ env.AZ_CLUSTER }}
       - name: Run 
         run: kubectl config current-context
    
