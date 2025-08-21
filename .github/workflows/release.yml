@@ -41,5 +41,5 @@ jobs:
             --title "Release v${{ steps.app-version.outputs.version }}" \
             --generate-notes \
             --target main \
-            --draft "true" \
+            --draft \
             --prerelease "false"
