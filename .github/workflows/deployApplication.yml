@@ -1,6 +1,8 @@
 name: Deploy application to K8s cluster
 on:
- push:
+  workflow_dispatch:
+  release:
+    types: [published]
 
 env:
   REGISTRY: ghcr.io
