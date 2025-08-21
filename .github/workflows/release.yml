@@ -1,6 +1,5 @@
 name: Release application
 on:
-  push:
   pull_request:
     types: [ closed ]
 
