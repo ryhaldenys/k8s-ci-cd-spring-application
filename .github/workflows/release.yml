@@ -7,9 +7,9 @@ on:
 jobs:
   relase-application:
     name: Release application
-    if: github.event.pull_request.merged == true &&
-      github.event.pull_request.base.ref == 'main' &&
-      contains(github.event.pull_request.labels.*.name, 'release')
+#    if: github.event.pull_request.merged == true &&
+#      github.event.pull_request.base.ref == 'main' &&
+#      contains(github.event.pull_request.labels.*.name, 'release')
 
     runs-on: ubuntu-latest
 
