@@ -4,7 +4,7 @@ plugins {
 
 bootJar {
     enabled = true
-    archiveBaseName = "${rootProject.name}"
+    archiveFileName = "${rootProject.name}.jar"
 }
 
 dependencies {
