@@ -1,0 +1,41 @@
+name: Generate Release Notes on Label
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  generate_notes:
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'release'
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate release notes from commits
+        id: notes
+        run: |
+          NOTES=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:"- %s")
+          echo "$NOTES"
+          echo "release_notes<<EOF" >> $GITHUB_ENV
+          echo "$NOTES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Print release notes
+        run: |
+          echo "Release Notes:"
+          echo "$RELEASE_NOTES"
+
+      - name: Comment on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        with:
+          message: |
+            **Release Notes:**
+            ${{ env.release_notes }}

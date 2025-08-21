@@ -1,0 +1,47 @@
+replicaCount: 1
+
+image:
+  repository: app
+  pullPolicy: IfNotPresent
+  tag: "latest"
+  port: 8080
+
+nameOverride: ""
+fullnameOverride: "k8s-application"
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+#   memory: 128Mi
+
+livenessProbe: {}
+#  httpGet:
+#    path: /
+#    port: http
+readinessProbe: {}
+#  httpGet:
+#    path: /
+#    port: http
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  hosts:
+    - host: application.com
+      paths:
+        - path: /api
+          pathType: Prefix
