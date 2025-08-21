@@ -82,4 +82,4 @@ jobs:
         run: |
          helm upgrade --install application k8s-application \
           --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
-          --set image.tag=${{ steps.app_version.outputs.version }}
+          --set image.tag=${{ needs.publish-container.outputs.app-version }}
