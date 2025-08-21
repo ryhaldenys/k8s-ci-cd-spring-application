@@ -27,8 +27,8 @@ jobs:
         continue-on-error: true
         run: |
           chmod +x ./gradlew
-          VERSION=$(./gradlew -q version)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          VERSION=$(./gradlew -q printVersion)
+          echo "version=$VERSION" | tee -a $GITHUB_OUTPUT
       - name: Print application version
         run: |
           echo "Version: ${{ steps.app-version.outputs.version }}"
