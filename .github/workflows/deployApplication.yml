@@ -80,6 +80,6 @@ jobs:
          id: install
       - name: Deploy with Helm
         run: |
-         helm upgrade --install application ./k8s-application \
+         helm upgrade --install application k8s-application \
           --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
           --set image.tag=${{ steps.application_version.outputs.version }}
