@@ -43,5 +43,4 @@ jobs:
           gh release create v${{ steps.app-version.outputs.version }} \
             --title "Release v${{ steps.app-version.outputs.version }}" \
             --generate-notes \
-            --target main \
-            --draft
+            --target main
