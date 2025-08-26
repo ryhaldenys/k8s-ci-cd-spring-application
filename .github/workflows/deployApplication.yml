@@ -101,6 +101,9 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.app_version.outputs.version }}
+      - name: List of images
+        run: |
+          docker images
 
 #  deploy-application:
 #    name: Deploy application to AKS
