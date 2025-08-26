@@ -2,7 +2,7 @@ name: Deploy application to K8s cluster
 on:
   workflow_dispatch:
   release:
-    types: [published]
+    types: [ published ]
 
 env:
   REGISTRY: ryhal.azurecr.io # ghcr.io
@@ -11,50 +11,50 @@ env:
   AZ_CLUSTER: k8s-spring-cluster
 
 jobs:
-#  publish-container-to-git:
-#    name: Publish container to GitHub registry
-#    runs-on: ubuntu-latest
-#
-#    permissions:
-#      contents: read
-#      packages: write
-#      attestations: write
-#      id-token: write
-#
-#    outputs:
-#     app-version: ${{ steps.app_version.outputs.version }}
-#
-#    steps:
-#      - name: Checkout Code
-#        uses: actions/checkout@v4
-#      - name: Setup Java
-#        uses: actions/setup-java@v3.14.1
-#        with:
-#           distribution: 'temurin'
-#           java-version: 21
-#           cache: 'gradle'
-#      - name: Build Jar file
-#        run: |
-#         chmod +x ./gradlew
-#         ./gradlew bootJar
-#      - name: Extract Application version
-#        id: app_version
-#        continue-on-error: true
-#        run: |
-#         VERSION=$(./gradlew -q printVersion)
-#         echo "version=$VERSION" | tee -a $GITHUB_OUTPUT
-#      - name: Docker Login
-#        uses: docker/login-action@v3.5.0
-#        with:
-#          registry: ${{ env.REGISTRY }}
-#          username: ${{ github.actor }}
-#          password: ${{ secrets.GITHUB_TOKEN }}
-#      - name: Build and Push Docker image
-#        uses: docker/build-push-action@v6.18.0
-#        with:
-#          context: .
-#          push: true
-#          tags:  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.app_version.outputs.version }}
+  #  publish-container-to-git:
+  #    name: Publish container to GitHub registry
+  #    runs-on: ubuntu-latest
+  #
+  #    permissions:
+  #      contents: read
+  #      packages: write
+  #      attestations: write
+  #      id-token: write
+  #
+  #    outputs:
+  #     app-version: ${{ steps.app_version.outputs.version }}
+  #
+  #    steps:
+  #      - name: Checkout Code
+  #        uses: actions/checkout@v4
+  #      - name: Setup Java
+  #        uses: actions/setup-java@v3.14.1
+  #        with:
+  #           distribution: 'temurin'
+  #           java-version: 21
+  #           cache: 'gradle'
+  #      - name: Build Jar file
+  #        run: |
+  #         chmod +x ./gradlew
+  #         ./gradlew bootJar
+  #      - name: Extract Application version
+  #        id: app_version
+  #        continue-on-error: true
+  #        run: |
+  #         VERSION=$(./gradlew -q printVersion)
+  #         echo "version=$VERSION" | tee -a $GITHUB_OUTPUT
+  #      - name: Docker Login
+  #        uses: docker/login-action@v3.5.0
+  #        with:
+  #          registry: ${{ env.REGISTRY }}
+  #          username: ${{ github.actor }}
+  #          password: ${{ secrets.GITHUB_TOKEN }}
+  #      - name: Build and Push Docker image
+  #        uses: docker/build-push-action@v6.18.0
+  #        with:
+  #          context: .
+  #          push: true
+  #          tags:  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.app_version.outputs.version }}
   publish-container-to-az:
     name: Build and publish app image to AZ
     runs-on: ubuntu-latest
@@ -70,7 +70,7 @@ jobs:
       - name: Build Jar file
         run: |
           chmod +x ./gradlew
-         ./gradlew bootJar
+          ./gradlew bootJar
       - name: Extract Application version
         id: app_version
         continue-on-error: true
