@@ -5,85 +5,132 @@ on:
     types: [published]
 
 env:
-  REGISTRY: ghcr.io
+  REGISTRY: ryhal.azurecr.io # ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   AZ_GROUP: FREE
   AZ_CLUSTER: k8s-spring-cluster
 
 jobs:
-  publish-container:
-    name: Publish container to GitHub registry
+#  publish-container-to-git:
+#    name: Publish container to GitHub registry
+#    runs-on: ubuntu-latest
+#
+#    permissions:
+#      contents: read
+#      packages: write
+#      attestations: write
+#      id-token: write
+#
+#    outputs:
+#     app-version: ${{ steps.app_version.outputs.version }}
+#
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v4
+#      - name: Setup Java
+#        uses: actions/setup-java@v3.14.1
+#        with:
+#           distribution: 'temurin'
+#           java-version: 21
+#           cache: 'gradle'
+#      - name: Build Jar file
+#        run: |
+#         chmod +x ./gradlew
+#         ./gradlew bootJar
+#      - name: Extract Application version
+#        id: app_version
+#        continue-on-error: true
+#        run: |
+#         VERSION=$(./gradlew -q printVersion)
+#         echo "version=$VERSION" | tee -a $GITHUB_OUTPUT
+#      - name: Docker Login
+#        uses: docker/login-action@v3.5.0
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Build and Push Docker image
+#        uses: docker/build-push-action@v6.18.0
+#        with:
+#          context: .
+#          push: true
+#          tags:  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.app_version.outputs.version }}
+  publish-container-to-az:
+    name: Build and publish app image to AZ
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
-
-    outputs:
-     app-version: ${{ steps.app_version.outputs.version }}
-   
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
       - name: Setup Java
         uses: actions/setup-java@v3.14.1
         with:
-           distribution: 'temurin'
-           java-version: 21
-           cache: 'gradle'
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'gradle'
       - name: Build Jar file
         run: |
-         chmod +x ./gradlew
+          chmod +x ./gradlew
          ./gradlew bootJar
       - name: Extract Application version
-        id: app_version 
+        id: app_version
         continue-on-error: true
         run: |
-         VERSION=$(./gradlew -q printVersion)
-         echo "version=$VERSION" | tee -a $GITHUB_OUTPUT  
-      - name: Docker Login
-        uses: docker/login-action@v3.5.0
+          VERSION=$(./gradlew -q printVersion)
+          echo "version=$VERSION" | tee -a $GITHUB_OUTPUT
+
+      - name: Login to AZ
+        uses: azure/login@v2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and Push Docker image
+          creds: ${{ secrets.AZURE_CREDS }}
+      - name: Login to AZ registry
+        run: az acr login --name ryhal
+      - name: Build image
         uses: docker/build-push-action@v6.18.0
-        with: 
+        with:
           context: .
-          push: true
-          tags:  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.app_version.outputs.version }}
-  deploy-application:
-    name: Deploy application to AKS
-    runs-on: ubuntu-latest
-    needs: publish-container
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      - name: Get Image name
-        run: echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.publish-container.outputs.app-version }}
-      - name: Login to Azure
-        uses: Azure/login@v2.3.0
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.app_version.outputs.version }}
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
         with:
-         creds: ${{ secrets.AZURE_CREDS }}
-      - name: Setup Kubectl
-        uses: azure/setup-kubectl@v4
-        id: install
-      - name: Setup Context
-        uses: azure/aks-set-context@v4
-        with:
-         resource-group: ${{ env.AZ_GROUP }}
-         cluster-name: ${{ env.AZ_CLUSTER }}
-      - name: Get K8s Context 
-        run: kubectl config current-context
-      - name: Setup Helm
-        uses: azure/setup-helm@v4.3.0
-        with:
-         id: install
-      - name: Deploy with Helm
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.app_version.outputs.version }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+      - name: Push Docker image
         run: |
-         helm upgrade --install application k8s-application \
-          --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
-          --set image.tag=${{ needs.publish-container.outputs.app-version }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.app_version.outputs.version }}
+
+#  deploy-application:
+#    name: Deploy application to AKS
+#    runs-on: ubuntu-latest
+#    needs: publish-container
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v4
+#      - name: Get Image name
+#        run: echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.publish-container.outputs.app-version }}
+#      - name: Login to Azure
+#        uses: Azure/login@v2.3.0
+#        with:
+#         creds: ${{ secrets.AZURE_CREDS }}
+#      - name: Setup Kubectl
+#        uses: azure/setup-kubectl@v4
+#        id: install
+#      - name: Setup Context
+#        uses: azure/aks-set-context@v4
+#        with:
+#         resource-group: ${{ env.AZ_GROUP }}
+#         cluster-name: ${{ env.AZ_CLUSTER }}
+#      - name: Get K8s Context
+#        run: kubectl config current-context
+#      - name: Setup Helm
+#        uses: azure/setup-helm@v4.3.0
+#        with:
+#         id: install
+#      - name: Deploy with Helm
+#        run: |
+#         helm upgrade --install application k8s-application \
+#          --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
+#          --set image.tag=${{ needs.publish-container.outputs.app-version }}
